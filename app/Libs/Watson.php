@@ -23,7 +23,7 @@ class Watson{
 
          // create curl resource 
          $ch = curl_init(); 
-         curl_setopt($ch, CURLOPT_USERPWD, "b3b49399-4b15-4360-a615-5e173aa5c32f:OHVQ2Dq8QTsL");
+         curl_setopt($ch, CURLOPT_USERPWD, env('WATSON_USER').":".env('WATSON_PWD'));
          
          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
          curl_setopt($ch, CURLOPT_URL, $url);
