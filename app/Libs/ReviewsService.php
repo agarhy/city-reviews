@@ -10,23 +10,23 @@ class ReviewsService {
     private $xmlDoc;
     private $ReviewsList=array();
 
+    private function __construct(){}
     public static function getInstance(){
        return ReviewsService::$instance = new ReviewsService();
     }
 
-    private function __construct(){
-        
-    }
+    
 
     public function setFeedUrl($url){    
         $this->feedUrl = $url;
     }
-
-
     public function getFeedUrl($url){    
         return $this->feedUrl;
     }
 
+    ////
+    // Fetch XML feed from Source
+    ////
     public function fetchFeed(){
 
         $this->xmlDoc = new \DOMDocument();
@@ -34,9 +34,12 @@ class ReviewsService {
         $this->feedXML = $this->xmlDoc->saveXML();               
     }
 
-    public function loadEntires($limit=5,$offset=0,$filters){
-        //$xmlObj = simplexml_load_string($this->feedXML);
-        
+    ////
+    // Load entires from fetched XML
+    // @paramter($filters) - Array of filters ['type'=> 'sentiment type']
+    ////
+    public function loadEntires($limit=0,$offset=0,$filters){
+   
         $xpath = new \DOMXPath($this->xmlDoc);
         $rootNamespace = $this->xmlDoc->lookupNamespaceUri($this->xmlDoc->namespaceURI); 
         $xpath->registerNamespace('feed', $rootNamespace);
@@ -50,34 +53,24 @@ class ReviewsService {
             $query = "//feed:entry[feed:content[contains(text(), 'Negative')]]";
         else
             $query = "//feed:entry";
-        //echo $xpath->query($query)->length;
+   
         $nodes = $xpath->query($query);
 
         foreach($nodes as $entry){
             if($entry->hasChildNodes())
             {
-               
-                // echo '<pre>';
-                // dump($entry->childNodes);
-                // echo '</pre>';
+            
                 $tags=['id','updated','title','content'];
                 $review = new Review;
                 foreach($entry->childNodes as $child){
-
-                    if(in_array($child->nodeName, $tags)){
-                        
-                        
-                        $func= 'set'.$child->nodeName;
-                    
+                    if(in_array($child->nodeName, $tags)){                                                
+                        $func= 'set'.$child->nodeName;    
                         $val = $child->ownerDocument->saveHTML( $child->firstChild );
                         $review->$func( $val );
                     }
-
-                    
-                    // dump($child->nodeName);
-                    // dump($child->ownerDocument->saveHTML( $child->firstChild ));
                 }
 
+                //verify entry sentiment
                 $review->extractContent()->verifySentiment();
                 $this->ReviewsList[]=$review;
                 
@@ -94,6 +87,11 @@ class ReviewsService {
     // public function getPrev($nodeId){
         
     // }
+
+    ////
+    // Load entry by <id> tag
+    // @paramter(nodeId) - String id
+    //
     public function loadNodeById($nodeId){
         $xpath = new \DOMXPath($this->xmlDoc);
         $rootNamespace = $this->xmlDoc->lookupNamespaceUri($this->xmlDoc->namespaceURI); 
@@ -119,11 +117,7 @@ class ReviewsService {
         }
     }
 
-    //get from source
-    //retrive by filters
-    //parse xml
-
-    //verify sentiment
+    
 }
 
 ?>

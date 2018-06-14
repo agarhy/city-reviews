@@ -15,6 +15,6 @@
 //     return view('welcome');
 // });
 
-Route::get('/{type}', 'HomeController@home');
+Route::get('/{type?}', 'HomeController@home');
 
 

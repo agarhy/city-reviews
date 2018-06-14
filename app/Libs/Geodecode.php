@@ -18,18 +18,18 @@ class Geodecode {
         return self::$_instance;
     }
     
+    /////
+    // Curl function gets city position coordinate from google geocode API
+    // @paramter(city) - Text city name
+    ////
     public  function gedecode($city){
 
         $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$city&key=".env('GOOGLE_MAPS_API_KEY');
 
         $ch = curl_init(); 
-      
-         
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         curl_setopt($ch, CURLOPT_URL, $url);
-         
-
-
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
          $result = curl_exec($ch);
          if ($result === FALSE) {
@@ -37,13 +37,12 @@ class Geodecode {
          }
         curl_close($ch);
         $res =json_decode( $result );
+        //return if no data retrieved 
         if(!isset($res->results[0])){
-            dump($city);
             return $this;
         }
 
-        //dump($res->results[0]);
-        
+        //set city coordinates
         self::$lat = $res->results[0]->geometry->location->lat;
         self::$lng = $res->results[0]->geometry->location->lng;
 

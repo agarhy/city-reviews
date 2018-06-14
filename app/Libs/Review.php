@@ -20,7 +20,7 @@ Class Review{
 
 
     public function __construct(){
-        //inject watson
+        
     }
 
     public function setid($id){ $this->id = $id;  }
@@ -64,10 +64,11 @@ Class Review{
         return json_encode($geoPoint); 
     }
 
-
+    ////
+    // extract <content> tag key:value pairs from feed 
+    ////
     public function extractContent(){
-        //echo $this->content;
-
+        
         $content = explode(', ',$this->content);
            
 
@@ -96,7 +97,7 @@ Class Review{
                 $this->$var = $nElm[1];
         }
         
-        //Verfiy feed semtiment , and get city entity
+        //Verfiy feed sentiment , and get city entity
         $this->verifySentiment();
         //Get City location coordinates
         $this->geoDecode();
@@ -122,8 +123,6 @@ Class Review{
         $watson->analyze($this->message);
         $this->city = $watson->getCity();
         $this->sentiment = $watson->getSentiment();                    
-                
-        // set $this->sentiment
     }
 }
 

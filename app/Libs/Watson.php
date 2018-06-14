@@ -10,6 +10,10 @@ class Watson{
 
     public function __construct () { }
 
+    /////
+    // Curl function gets city and sentiment from passed text
+    // @paramter(text) - Text sentance
+    ////
     public function analyze($text){
         $text =urlencode( $text);
 
@@ -19,9 +23,6 @@ class Watson{
             'Content-Type: application/json'
             );
         
-       
-
-         // create curl resource 
          $ch = curl_init(); 
          curl_setopt($ch, CURLOPT_USERPWD, env('WATSON_USER').":".env('WATSON_PWD'));
          
@@ -51,8 +52,6 @@ class Watson{
          }
 
          $this->sentiment = $res->sentiment->document->label;
-
-         //dump($res);
 
          return $this;
     }
