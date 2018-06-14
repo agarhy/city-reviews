@@ -8,6 +8,9 @@ function initMap() {
         var infowindow = new google.maps.InfoWindow();
         var marker, i;
         var markers = new Array();
+        var mc;
+        var mcOptions = {gridSize: 20, maxZoom: 17};
+        var max=20,min=20;
 
         var iconBase = '/img/';
         var icons = {
@@ -31,21 +34,49 @@ function initMap() {
             
 
             $(val).click(function() {
-                console.log('clicked');
+               
                 google.maps.event.trigger(markers[i], 'click');
             });
 
             entry=[html,lat,lng,sentiment];
-            console.log(entry);
+            
             locations.push(entry);
         
         });
+        
+        mc = new MarkerClusterer(map, [], mcOptions);
+        
 
+        for (i = 0; i < locations.length; i++) { 
+          
+          
+          ///get array of markers currently in cluster
+        var allMarkers = mc.getMarkers();
+        var latlng=new google.maps.LatLng(locations[i][1], locations[i][2]);
+        //final position for marker, could be updated if another marker already exists in same position
+        var finalLatLng = latlng;
 
+        //check to see if any of the existing markers match the latlng of the new marker
+        if (allMarkers.length != 0) {
+            for (i=0; i < allMarkers.length; i++) {
+                var existingMarker = allMarkers[i];
+                var pos = existingMarker.getPosition();
 
-        for (i = 0; i < locations.length; i++) {  
+                //if a marker already exists in the same position as this marker
+                if (latlng.equals(pos) || latlng.getBounds().contains(pos)) {
+                    console.log('overlapping detect');
+                    //update the position of the coincident marker by applying a small multipler to its coordinates
+                    var newLat = latlng.lat() * (Math.random() * (max - min) + min);
+                    var newLng = latlng.lng() * (Math.random() * (max - min) + min);
+
+                    finalLatLng = new google.maps.LatLng(newLat,newLng);
+
+                }                   
+            }
+        }
+
         marker = new google.maps.Marker({
-            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+            position: finalLatLng,
             map: map,
             icon: icons[locations[i][3]].icon,
         });
