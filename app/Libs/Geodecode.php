@@ -37,8 +37,13 @@ class Geodecode {
          }
         curl_close($ch);
         $res =json_decode( $result );
-        //dump($res->results[0]);
+        if(!isset($res->results[0])){
+            dump($city);
+            return $this;
+        }
 
+        //dump($res->results[0]);
+        
         self::$lat = $res->results[0]->geometry->location->lat;
         self::$lng = $res->results[0]->geometry->location->lng;
 

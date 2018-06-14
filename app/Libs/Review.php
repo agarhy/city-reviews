@@ -42,8 +42,8 @@ Class Review{
 
     public function getSentiment(){ return $this->sentiment; }
     public function getCity(){ return $this->city; }
-    public function getLat(){ return $this->Lat; }
-    public function getLng(){ return $this->Lng; }
+    public function getLat(){ return $this->lat; }
+    public function getLng(){ return $this->lng; }
     public function __toString()
     {
         return json_encode(array(
@@ -109,7 +109,7 @@ Class Review{
 
         $location = json_decode( 
             Geodecode::getInstance()
-                    ->gedecode('Beirut')
+                    ->gedecode($this->city)
                     ->getLocatoin()
                 );
 

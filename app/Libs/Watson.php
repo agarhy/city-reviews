@@ -40,10 +40,12 @@ class Watson{
         
          if(!isset($res->entities) || count($res->entities) < 1)
             return json_encode(array('status'=>false,'error'=> "IBM Watson is unable to analyze sentance"));
-
+         
+           
          foreach($res->entities as $elm){
-             if($elm->type == "Location" && $elm->disambiguation->subtype[0]== "City"){
+             if($elm->type == "Location" && in_array("City", $elm->disambiguation->subtype) ){
                 $this->city = $elm->text;
+               
                 break;
              }
          }

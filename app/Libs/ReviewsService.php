@@ -34,7 +34,7 @@ class ReviewsService {
         $this->feedXML = $this->xmlDoc->saveXML();               
     }
 
-    public function loadEntires($limit=5,$offset=0){
+    public function loadEntires($limit=5,$offset=0,$filters){
         //$xmlObj = simplexml_load_string($this->feedXML);
         
         $xpath = new \DOMXPath($this->xmlDoc);
@@ -42,7 +42,14 @@ class ReviewsService {
         $xpath->registerNamespace('feed', $rootNamespace);
 
         $to_offset=$offset+$limit;
-        $query = "//feed:entry[position() >= $offset and position() < $to_offset]";
+        
+        //$query = "//feed:entry[position() >= $offset and position() < $to_offset]";
+        if(isset($filters['type']) && $filters['type']=='positive')
+            $query = "//feed:entry[feed:content[contains(text(), 'Positive')]]";
+        elseif(isset($filters['type']) && $filters['type']=='negative')
+            $query = "//feed:entry[feed:content[contains(text(), 'Negative')]]";
+        else
+            $query = "//feed:entry";
         //echo $xpath->query($query)->length;
         $nodes = $xpath->query($query);
 
